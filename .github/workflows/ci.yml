@@ -1,0 +1,46 @@
+name: React App CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run tests (optional)
+      - name: Run tests
+        run: npm test -- --coverage
+
+      # Build the project
+      - name: Build the project
+        run: npm run build
+
+      # Install Vercel CLI
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      # Deploy to Vercel
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.video2sumaryai }}
+        run: vercel --prod --confirm --token=$VERCEL_TOKEN
